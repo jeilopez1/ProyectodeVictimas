@@ -1,0 +1,249 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package Clases;
+
+import Conexion.Conexion;
+import Interface.InUsuario;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ *
+ * @author Jeisson Lopez
+ */
+public class ClassUsuario implements InUsuario {
+
+    int id_usuario;
+    String PrimerNombre;
+    String SegundoNombre;
+    String PrimerApellido;
+    String SegundoApellido;
+    String CorreoElectronico;
+    Date FechaDeNacimiento;
+    int id_TipoDeIdentificacion;
+    long Numero_de_Identificacion;
+    String Sexo;
+    String Alias;
+    String Contrasena;
+    long  N_Contacto;
+
+    private static final String SQL_INSERT = "INSERT into usuario() VALUES(null,?,?,?,?,?,?,?,?,?,?,?,?);";
+    private static final String SQL_IniciarSesion = "SELECT * FROM Usuario WHERE Alias = ?";
+    private static final String SQL_Consultartodo = "SELECT * FROM Usuario";
+    private static final Conexion con = Conexion.conectar();
+
+    public ClassUsuario(int id_usuario, String PrimerNombre, String SegundoNombre, String PrimerApellido, String SegundoApellido, String CorreoElectronico, Date FechaDeNacimiento, int id_TipoDeIdentificacion, long Numero_de_Identificacion, String Sexo, String Alias, String Contrasena, long N_Contacto) {
+        this.id_usuario = id_usuario;
+        this.PrimerNombre = PrimerNombre;
+        this.SegundoNombre = SegundoNombre;
+        this.PrimerApellido = PrimerApellido;
+        this.SegundoApellido = SegundoApellido;
+        this.CorreoElectronico = CorreoElectronico;
+        this.FechaDeNacimiento = FechaDeNacimiento;
+        this.id_TipoDeIdentificacion = id_TipoDeIdentificacion;
+        this.Numero_de_Identificacion = Numero_de_Identificacion;
+        this.Sexo = Sexo;
+        this.Alias = Alias;
+        this.Contrasena = Contrasena;
+        this.N_Contacto = N_Contacto;
+    }
+
+   
+    public ClassUsuario() {
+    }
+
+    public Date getFechaDeNacimiento() {
+        return FechaDeNacimiento;
+    }
+
+    public void setFechaDeNacimiento(Date FechaDeNacimiento) {
+        this.FechaDeNacimiento = FechaDeNacimiento;
+    }
+
+    
+
+    public int getId_usuario() {
+        return id_usuario;
+    }
+
+    public void setId_usuario(int id_usuario) {
+        this.id_usuario = id_usuario;
+    }
+
+    public String getPrimerNombre() {
+        return PrimerNombre;
+    }
+
+    public void setPrimerNombre(String PrimerNombre) {
+        this.PrimerNombre = PrimerNombre;
+    }
+
+    public String getSegundoNombre() {
+        return SegundoNombre;
+    }
+
+    public void setSegundoNombre(String SegundoNombre) {
+        this.SegundoNombre = SegundoNombre;
+    }
+
+    public String getPrimerApellido() {
+        return PrimerApellido;
+    }
+
+    public void setPrimerApellido(String PrimerApellido) {
+        this.PrimerApellido = PrimerApellido;
+    }
+
+    public String getSegundoApellido() {
+        return SegundoApellido;
+    }
+
+    public void setSegundoApellido(String SegundoApellido) {
+        this.SegundoApellido = SegundoApellido;
+    }
+
+    public String getCorreoElectronico() {
+        return CorreoElectronico;
+    }
+
+    public void setCorreoElectronico(String CorreoElectronico) {
+        this.CorreoElectronico = CorreoElectronico;
+    }
+
+   
+
+    public int getId_TipoDeIdentificacion() {
+        return id_TipoDeIdentificacion;
+    }
+
+    public void setId_TipoDeIdentificacion(int id_TipoDeIdentificacion) {
+        this.id_TipoDeIdentificacion = id_TipoDeIdentificacion;
+    }
+
+    public long getNumero_de_Identificacion() {
+        return Numero_de_Identificacion;
+    }
+
+    public void setNumero_de_Identificacion(long Numero_de_Identificacion) {
+        this.Numero_de_Identificacion = Numero_de_Identificacion;
+    }
+
+    public String getSexo() {
+        return Sexo;
+    }
+
+    public void setSexo(String Sexo) {
+        this.Sexo = Sexo;
+    }
+
+    public String getAlias() {
+        return Alias;
+    }
+
+    public void setAlias(String Alias) {
+        this.Alias = Alias;
+    }
+
+    public String getContrasena() {
+        return Contrasena;
+    }
+
+    public void setContrasena(String Contrasena) {
+        this.Contrasena = Contrasena;
+    }
+
+    public long getN_Contacto() {
+        return N_Contacto;
+    }
+
+    public void setN_Contacto(long N_Contacto) {
+        this.N_Contacto = N_Contacto;
+    }
+
+
+
+    @Override
+    public ClassUsuario IniciarSesion(String alias, String constrasena) {
+        PreparedStatement ps;
+        ResultSet res;
+        ClassUsuario usuario = null;
+        try {
+            ps = con.getConnection().prepareStatement("SELECT * FROM Usuario WHERE Alias = ?");
+            ps.setString(1, alias);
+            res = ps.executeQuery();
+            while (res.next()) {
+                usuario = new ClassUsuario(res.getInt(1), res.getString(2),res.getString(3), res.getString(4), res.getString(5),res.getString(6), res.getDate(7), res.getInt(8),res.getLong(9) , res.getString(10), res.getString(11), res.getString(12),res.getLong(13));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClassUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            con.cerrarConexion();
+        }
+        try {
+            if (!(constrasena.equals(usuario.getContrasena()))) {
+                usuario = null;
+            }
+        } catch (java.lang.NullPointerException e) {
+            usuario = null;
+        }
+
+        return usuario;
+    }
+
+    @Override
+    public boolean RegistrarUsuario(String PrimerNombre, String SegundoNombre, String PrimerApellido, String SegundoApellido, String CorreoElectronico, Date FechaDeNacimiento, int id_TipoDeIdentificacion, long Numero_de_Identificacion, String Sexo, String Alias, String Contrasena, long N_Contacto) {
+
+        PreparedStatement ps;
+        try {
+            ps = con.getConnection().prepareStatement("INSERT into usuario() VALUES(null,?,?,?,?,?,?,?,?,?,?,?,?); ");
+
+            ps.setString(1, PrimerNombre);
+            ps.setString(2, SegundoNombre);
+            ps.setString(3, PrimerApellido);
+            ps.setString(4, SegundoApellido);
+            ps.setString(5, CorreoElectronico);
+            ps.setDate(6, FechaDeNacimiento);
+            ps.setInt(7, id_TipoDeIdentificacion);
+            ps.setLong(8, Numero_de_Identificacion);
+            ps.setString(9, Sexo);
+            ps.setString(10, Alias);
+            ps.setString(11, Contrasena);
+            ps.setLong(12, N_Contacto);
+
+            if (ps.executeUpdate() > 0) {
+                con.cerrarConexion();
+                return true;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClassUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            con.cerrarConexion();
+        }
+
+        return false;
+    }
+
+    @Override
+    public ClassUsuario ConsultarUsuario(int id_usuario, String alias, String nombre, String apellido, Integer cedula, String constraseña) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+
+
+    @Override
+    public boolean EliminarUsuario(int id_usuario) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ClassUsuario ModificarUsuario(String PrimerNombre, String SegundoNombre, String PrimerApellido, String SegundoApellido, String CorreoElectronico, Date FechaDeNacimiento, int id_TipoDeIdentificacion, long Numero_de_Identificacion, String Sexo, String Alias, String Contrasena, long N_Contacto) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+}
